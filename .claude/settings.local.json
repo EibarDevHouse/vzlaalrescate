@@ -4,7 +4,9 @@
       "Bash(npm --version)",
       "Bash(npx --version)",
       "Bash(npm view *)",
-      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=false --import-alias \"@/*\" --no-git)"
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=false --import-alias \"@/*\" --no-git)",
+      "Bash(ls -la \"c:\\\\Users\\\\ejhea\\\\LaDevHouse\\\\VzlaAlRescate\" | head -20)",
+      "Read(//c/Users/ejhea/LaDevHouse/VzlaAlRescate/**)"
     ]
   }
 }
