@@ -74,19 +74,19 @@ export async function createAccessRequest(
 
       console.log("[Email] Creator data:", creatorData);
       console.log("[Email] Creator error:", creatorError);
-      console.log("[Email] Creator email:", creatorData?.email);
+      console.log("[Email] Creator email:", creatorData?.user?.email);
 
-      if (creatorData?.email) {
+      if (creatorData?.user?.email) {
         const { sendEmail, accessRequestTemplate } = await import(
           "@/lib/email/sender"
         );
 
-        console.log("[Email] Sending email to:", creatorData.email);
+        console.log("[Email] Sending email to:", creatorData.user?.email);
         console.log("[Email] ZOHO_SMTP_USER:", process.env.ZOHO_SMTP_USER);
         console.log("[Email] ZOHO_SMTP_HOST:", process.env.ZOHO_SMTP_HOST);
 
         const emailResult = await sendEmail({
-          to: creatorData.email,
+          to: creatorData.user!.email,
           subject: `Nueva solicitud de acceso - ${reportData.nombre_completo}`,
           html: accessRequestTemplate({
             solicitanteName: nombre,

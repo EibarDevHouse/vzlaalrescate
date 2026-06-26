@@ -158,7 +158,7 @@ export function MissingPersonForm({ onSuccess }: MissingPersonFormProps) {
 
       {/* Section 2: Photo */}
       <fieldset>
-        <PhotoUploader onPhotoSelect={setSelectedPhoto} error={errors.foto?.message} />
+        <PhotoUploader onPhotoSelect={setSelectedPhoto} error={errors.foto?.message as string | undefined} />
       </fieldset>
 
       {/* Section 3: Optional Physical Characteristics */}

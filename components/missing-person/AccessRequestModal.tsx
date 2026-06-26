@@ -72,7 +72,7 @@ export function AccessRequestModal({
         onClose();
       }, 2000);
     } else {
-      setError(result.error);
+      setError(result.error || "Error desconocido");
     }
 
     setIsLoading(false);

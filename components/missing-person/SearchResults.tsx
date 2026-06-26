@@ -4,7 +4,20 @@ import { MissingPersonCard } from "./MissingPersonCard";
 import { AlertCircle } from "lucide-react";
 
 interface SearchResultsProps {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    genero?: string;
+    colorPiel?: string;
+    colorCabello?: string;
+    colorOjos?: string;
+    usaLentes?: string;
+    edadMin?: string;
+    edadMax?: string;
+    estaturaMin?: string;
+    estaturaMax?: string;
+    pesoMin?: string;
+    pesoMax?: string;
+  }>;
 }
 
 export async function SearchResults({ searchParams }: SearchResultsProps) {

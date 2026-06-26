@@ -49,13 +49,13 @@ export async function approveAccessRequest(
       .eq("cedula", cedula)
       .single();
 
-    if (solicitantData?.email && reportData) {
+    if (solicitantData?.user?.email && reportData) {
       const { sendEmail, accessApprovedTemplate } = await import(
         "@/lib/email/sender"
       );
 
       await sendEmail({
-        to: solicitantData.email,
+        to: solicitantData.user.email,
         subject: `Solicitud Aprobada - ${reportData.nombre_completo}`,
         html: accessApprovedTemplate({
           reportName: reportData.nombre_completo,
@@ -107,13 +107,13 @@ export async function rejectAccessRequest(
       .eq("cedula", cedula)
       .single();
 
-    if (solicitantData?.email && reportData) {
+    if (solicitantData?.user?.email && reportData) {
       const { sendEmail, accessRejectedTemplate } = await import(
         "@/lib/email/sender"
       );
 
       await sendEmail({
-        to: solicitantData.email,
+        to: solicitantData.user.email,
         subject: `Solicitud Denegada - ${reportData.nombre_completo}`,
         html: accessRejectedTemplate({
           reportName: reportData.nombre_completo,

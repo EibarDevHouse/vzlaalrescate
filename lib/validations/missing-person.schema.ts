@@ -47,15 +47,8 @@ export const missingPersonFormSchema = z.object({
   colorCabello: z.enum(COLOR_CABELLO_OPTIONS).optional().nullable(),
   colorOjos: z.enum(COLOR_OJOS_OPTIONS).optional().nullable(),
   usaLentes: z
-    .union([z.boolean(), z.string()])
-    .transform((val) => {
-      if (typeof val === "boolean") return val;
-      if (val === "true") return true;
-      if (val === "false") return false;
-      return null;
-    })
-    .optional()
-    .nullable(),
+    .enum(["true", "false", ""])
+    .optional(),
   estaturaCm: z
     .number()
     .int()
