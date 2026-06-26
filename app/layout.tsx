@@ -1,5 +1,12 @@
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Vzla Al Rescate - Busca Desaparecidos",
@@ -23,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="scroll-smooth">
-      <body className="min-h-screen flex flex-col bg-white">{children}</body>
+    <html lang="es" className={`scroll-smooth ${inter.variable}`}>
+      <body className={`min-h-screen flex flex-col bg-white font-sans`}>{children}</body>
     </html>
   );
 }
