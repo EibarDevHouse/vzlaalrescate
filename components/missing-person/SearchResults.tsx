@@ -28,7 +28,7 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
 
   let query_obj = supabase.from("missing_persons").select("*");
 
-  // Apply text search
+  // Apply text search with flexible matching (case-insensitive substring)
   if (query.trim()) {
     query_obj = query_obj.or(
       `nombre_completo.ilike.%${query}%,cedula.ilike.%${query}%,descripcion_fisica.ilike.%${query}%,ultima_ubicacion.ilike.%${query}%`

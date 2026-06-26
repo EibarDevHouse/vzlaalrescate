@@ -7,9 +7,16 @@ import { Alert } from "@/components/ui/Alert";
 interface PhotoUploaderProps {
   onPhotoSelect: (file: File) => void;
   error?: string;
+  label?: string;
+  isRequired?: boolean;
 }
 
-export function PhotoUploader({ onPhotoSelect, error }: PhotoUploaderProps) {
+export function PhotoUploader({
+  onPhotoSelect,
+  error,
+  label = "Foto del Desaparecido",
+  isRequired = true
+}: PhotoUploaderProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -74,7 +81,7 @@ export function PhotoUploader({ onPhotoSelect, error }: PhotoUploaderProps) {
   return (
     <div className="w-full space-y-3">
       <label className="block text-sm font-medium text-gray-700">
-        Foto del Desaparecido *
+        {label} {isRequired && "*"}
       </label>
 
       {preview ? (

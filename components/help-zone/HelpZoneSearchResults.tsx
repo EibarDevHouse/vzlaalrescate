@@ -1,0 +1,92 @@
+import { createClient } from "@/lib/supabase/server";
+import { HelpZoneCard } from "./HelpZoneCard";
+import { AlertCircle } from "lucide-react";
+
+interface SearchResultsProps {
+  searchParams: Promise<{
+    q?: string;
+  }>;
+}
+
+export async function HelpZoneSearchResults({ searchParams }: SearchResultsProps) {
+  const params = await searchParams;
+  const query = params.q || "";
+
+  const supabase = await createClient();
+
+  let query_obj = supabase
+    .from("help_zones")
+    .select("*")
+    .eq("estado", "activa");
+
+  // Apply flexible text search
+  if (query.trim()) {
+    const lowerQuery = query.toLowerCase();
+    const INSUMOS = ["agua", "alimentos", "medicamentos", "pañales", "ropa", "refugio", "otros"];
+
+    // Check if query matches any insumo (flexible matching)
+    const matchingInsumos = INSUMOS.filter(insumo => insumo.includes(lowerQuery));
+
+    if (matchingInsumos.length > 0) {
+      // Search by insumo match
+      const insumoFilters = matchingInsumos.map(insumo => `insumos_necesarios.cs.{${insumo}}`).join(",");
+      query_obj = query_obj.or(
+        `zona.ilike.%${query}%,descripcion.ilike.%${query}%,${insumoFilters}`
+      );
+    } else {
+      // Search in zona and descripcion
+      query_obj = query_obj.or(
+        `zona.ilike.%${query}%,descripcion.ilike.%${query}%`
+      );
+    }
+  }
+
+  // Order and limit
+  query_obj = query_obj.order("created_at", { ascending: false }).limit(50);
+
+  const { data, error } = await query_obj;
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6 flex gap-3">
+        <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0" />
+        <div>
+          <h3 className="font-semibold text-red-900">Error en la búsqueda</h3>
+          <p className="text-sm text-red-800 mt-1">
+            Ocurrió un error al buscar zonas. Por favor, intenta de nuevo.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <AlertCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">
+          {query ? "No se encontraron zonas" : "Aún no hay zonas reportadas"}
+        </h3>
+        <p className="text-gray-600 max-w-md mx-auto">
+          {query
+            ? `No encontramos zonas que coincidan con "${query}". Intenta con otros términos.`
+            : "Cuando se reporte una zona que necesite ayuda aparecerá aquí."}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <p className="text-sm text-gray-600 mb-6">
+        Se encontraron <strong>{data.length}</strong> zona{data.length === 1 ? "" : "s"}
+        {query && ` para "${query}"`}
+      </p>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {data.map((zone) => (
+          <HelpZoneCard key={zone.id} zone={zone} />
+        ))}
+      </div>
+    </div>
+  );
+}

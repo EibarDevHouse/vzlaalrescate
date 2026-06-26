@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Search } from "lucide-react";
 
-export function SearchBar() {
+interface SearchBarProps {
+  placeholder?: string;
+}
+
+export function SearchBar({ placeholder = "Busca por nombre, cédula o descripción..." }: SearchBarProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
 
@@ -25,7 +29,7 @@ export function SearchBar() {
     <div className="w-full">
       <Input
         type="text"
-        placeholder="Busca por nombre, cédula o descripción..."
+        placeholder={placeholder}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         icon={<Search className="w-5 h-5" />}

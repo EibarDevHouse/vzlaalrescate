@@ -268,7 +268,7 @@ export default function Home() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
               {/* Personas */}
-              <Link href="/login" className="group bg-white border-2 border-gray-100 hover:border-[#C53030]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <Link href="/buscar" className="group bg-white border-2 border-gray-100 hover:border-[#C53030]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                 <div className="h-1 bg-[#C53030]" />
                 <div className="p-8">
                   <div className="flex items-center gap-3 mb-6">
@@ -299,7 +299,7 @@ export default function Home() {
               </Link>
 
               {/* Mascotas */}
-              <Link href="/login" className="group bg-white border-2 border-gray-100 hover:border-amber-400/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <Link href="/mascotas" className="group bg-white border-2 border-gray-100 hover:border-amber-400/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                 <div className="h-1 bg-gradient-to-r from-amber-500 to-orange-400" />
                 <div className="p-8">
                   <div className="flex items-center gap-3 mb-6">
@@ -330,7 +330,7 @@ export default function Home() {
               </Link>
 
               {/* Zona necesita insumos */}
-              <Link href="/login" className="group bg-white border-2 border-gray-100 hover:border-emerald-400/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 sm:col-span-2 lg:col-span-1">
+              <Link href="/zonas" className="group bg-white border-2 border-gray-100 hover:border-emerald-400/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 sm:col-span-2 lg:col-span-1">
                 <div className="h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
                 <div className="p-8">
                   <div className="flex items-center gap-3 mb-6">

@@ -52,3 +52,68 @@ export const RELACION_OPTIONS = [
   "compañera",
   "otro",
 ] as const;
+
+export const INSUMOS_OPTIONS = [
+  "agua",
+  "alimentos",
+  "medicamentos",
+  "pañales",
+  "ropa",
+  "refugio",
+  "otros",
+] as const;
+
+export const ZONA_ESTADO_OPTIONS = [
+  "activa",
+  "atendida",
+  "cerrada",
+] as const;
+
+export const ESPECIE_OPTIONS = [
+  "perro",
+  "gato",
+  "otro",
+] as const;
+
+export const RAZA_PERRO = [
+  "Pastor alemán",
+  "Labrador",
+  "Golden retriever",
+  "Bulldog",
+  "Poodle",
+  "Chihuahua",
+  "Beagle",
+  "Boxer",
+  "Cocker spaniel",
+  "Dálmata",
+  "Otra",
+] as const;
+
+export const RAZA_GATO = [
+  "Persa",
+  "Siamés",
+  "Azul ruso",
+  "Bengalí",
+  "Maine coon",
+  "Ragdoll",
+  "Sphynx",
+  "Gato común",
+  "Otra",
+] as const;
+
+export const COLOR_MASCOTA = [
+  "negro",
+  "blanco",
+  "marrón",
+  "gris",
+  "naranja",
+  "rojo",
+  "bicolor",
+  "tricolor",
+  "otro",
+] as const;
+
+export const PET_ESTADO_OPTIONS = [
+  "desaparecido",
+  "encontrado",
+] as const;

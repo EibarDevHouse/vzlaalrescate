@@ -1,8 +1,10 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { SearchBar } from "@/components/missing-person/SearchBar";
 import { SearchResults } from "@/components/missing-person/SearchResults";
 import { SearchPageClient } from "./page-client";
+import { FileText } from "lucide-react";
 
 export const metadata = {
   title: "Buscar Desaparecidos - Vzla Al Rescate",
@@ -20,17 +22,26 @@ export default async function BuscarPage({
       <Navbar />
       <main className="flex-grow px-4 py-6 sm:py-8 bg-gray-50">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-gray-900">Buscar Desaparecidos</h1>
-            <p className="text-gray-800 font-semibold">
-              Busca entre todos los reportes disponibles. Usa el nombre, cédula o una
-              descripción para encontrar a la persona que buscas.
-            </p>
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div className="flex-1">
+              <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-gray-900">Buscar Desaparecidos</h1>
+              <p className="text-gray-800 font-semibold">
+                Busca entre todos los reportes disponibles. Usa el nombre, cédula o una
+                descripción para encontrar a la persona que buscas.
+              </p>
+            </div>
+            <Link
+              href="/reportar"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-[#C53030] hover:bg-[#A82828] text-white font-bold rounded-xl transition-all text-[15px] shadow-sm flex-shrink-0"
+            >
+              <FileText className="w-4 h-4" />
+              Reportar
+            </Link>
           </div>
 
           <Suspense fallback={<div className="h-12 bg-gray-200 rounded-lg animate-pulse" />}>
             <div className="mb-8">
-              <SearchBar />
+              <SearchBar placeholder="Busca por nombre, cédula o descripción..." />
             </div>
           </Suspense>
 

@@ -5,8 +5,9 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
   const code = searchParams.get("code");
+  const next = searchParams.get("next") ?? "/reportar";
 
-  console.log("🔐 Auth callback:", { code: code ? "existe" : "no existe" });
+  console.log("🔐 Auth callback:", { code: code ? "existe" : "no existe", next });
 
   if (code) {
     const supabase = await createClient();
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest) {
     }
 
     console.log("✅ Sesión creada exitosamente");
-    return NextResponse.redirect(new URL("/reportar", request.url));
+    return NextResponse.redirect(new URL(next, request.url));
   }
 
   console.warn("⚠️ Sin code en la URL");

@@ -124,13 +124,22 @@ export function Navbar() {
                 href="/buscar"
                 className="px-4 py-2 text-[14px] font-semibold text-gray-600 hover:text-[#1E3A5F] hover:bg-slate-50 rounded-lg transition-all"
               >
-                Buscar personas
+                Personas
+              </Link>
+              <Link
+                href="/mascotas"
+                className="px-4 py-2 text-[14px] font-semibold text-gray-600 hover:text-[#1E3A5F] hover:bg-slate-50 rounded-lg transition-all"
+              >
+                Mascotas
+              </Link>
+              <Link
+                href="/zonas"
+                className="px-4 py-2 text-[14px] font-semibold text-gray-600 hover:text-[#1E3A5F] hover:bg-slate-50 rounded-lg transition-all"
+              >
+                Zonas
               </Link>
               {user ? (
                 <>
-                  <Link href="/reportar" className="px-4 py-2 text-[14px] font-semibold text-gray-600 hover:text-[#1E3A5F] hover:bg-slate-50 rounded-lg transition-all">
-                    Mis reportes
-                  </Link>
                   <Link href="/perfil" className="px-4 py-2 text-[14px] font-semibold text-gray-600 hover:text-[#1E3A5F] hover:bg-slate-50 rounded-lg transition-all">
                     Mi perfil
                   </Link>
@@ -179,23 +188,40 @@ export function Navbar() {
           {/* ── Mobile drawer ── */}
           {mobileMenuOpen && (
             <div className="sm:hidden border-t border-gray-100 pt-2 pb-6">
-              {/* Search link */}
+              {/* Search links */}
               <Link
                 href="/buscar"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-between px-4 py-3.5 text-[15px] font-semibold text-gray-800 hover:bg-slate-50 rounded-xl transition-all group"
               >
-                <span>Buscar desaparecidos</span>
+                <span>Buscar personas</span>
                 <span className="text-xs px-2 py-0.5 bg-[#1E3A5F] text-white rounded-full font-bold">
+                  Sin registro
+                </span>
+              </Link>
+              <Link
+                href="/mascotas"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-4 py-3.5 text-[15px] font-semibold text-gray-800 hover:bg-slate-50 rounded-xl transition-all group"
+              >
+                <span>Buscar mascotas</span>
+                <span className="text-xs px-2 py-0.5 bg-amber-600 text-white rounded-full font-bold">
+                  Sin registro
+                </span>
+              </Link>
+              <Link
+                href="/zonas"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-4 py-3.5 text-[15px] font-semibold text-gray-800 hover:bg-slate-50 rounded-xl transition-all group"
+              >
+                <span>Zonas con ayuda</span>
+                <span className="text-xs px-2 py-0.5 bg-emerald-600 text-white rounded-full font-bold">
                   Sin registro
                 </span>
               </Link>
 
               {user ? (
                 <>
-                  <Link href="/reportar" onClick={() => setMobileMenuOpen(false)} className="flex items-center px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-slate-50 rounded-xl transition-all">
-                    Mis reportes
-                  </Link>
                   <Link href="/perfil" onClick={() => setMobileMenuOpen(false)} className="flex items-center px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-slate-50 rounded-xl transition-all">
                     Mi perfil
                   </Link>

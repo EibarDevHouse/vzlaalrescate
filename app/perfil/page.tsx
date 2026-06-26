@@ -11,11 +11,16 @@ import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { approveAccessRequest, rejectAccessRequest } from "@/app/admin/actions";
 
 interface MyReport {
-  cedula: string;
-  nombre_completo: string;
+  id: string;
+  type: "persona" | "mascota" | "zona";
+  titulo: string;
+  subtitulo?: string;
   estado: string;
   created_at: string;
-  pending_requests_count: number;
+  pending_requests_count?: number;
+  cedula?: string; // para personas
+  nombre?: string; // para mascotas
+  zona?: string; // para zonas
 }
 
 interface AccessRequest {
@@ -66,20 +71,31 @@ export default function PerfilPage() {
   const loadData = async () => {
     if (!user) return;
 
-    // Load my reports
-    const { data: reports } = await supabase
+    const allReports: MyReport[] = [];
+
+    // Load personas reports
+    const { data: personas } = await supabase
       .from("missing_persons")
       .select("cedula, nombre_completo, estado, created_at")
       .eq("reportado_por", user.id)
       .order("created_at", { ascending: false });
 
-    if (reports) {
-      setMyReports(reports as MyReport[]);
+    if (personas) {
+      personas.forEach((p: any) => {
+        allReports.push({
+          id: p.cedula,
+          type: "persona",
+          titulo: p.nombre_completo,
+          subtitulo: p.cedula,
+          estado: p.estado,
+          created_at: p.created_at,
+          cedula: p.cedula,
+        });
+      });
 
-      // Load pending requests for each report
+      // Load pending requests for personas
       const requestsMap: Record<string, AccessRequest[]> = {};
-
-      for (const report of reports) {
+      for (const report of personas) {
         const { data: requests } = await supabase
           .from("access_requests")
           .select("*")
@@ -91,9 +107,54 @@ export default function PerfilPage() {
           requestsMap[report.cedula] = requests as AccessRequest[];
         }
       }
-
       setPendingRequests(requestsMap);
     }
+
+    // Load mascotas reports
+    const { data: mascotas } = await supabase
+      .from("missing_pets")
+      .select("id, nombre, especie, estado, created_at")
+      .eq("reportado_por", user.id)
+      .order("created_at", { ascending: false });
+
+    if (mascotas) {
+      mascotas.forEach((m: any) => {
+        allReports.push({
+          id: m.id,
+          type: "mascota",
+          titulo: m.nombre,
+          subtitulo: m.especie.charAt(0).toUpperCase() + m.especie.slice(1),
+          estado: m.estado,
+          created_at: m.created_at,
+          nombre: m.nombre,
+        });
+      });
+    }
+
+    // Load zonas reports
+    const { data: zonas } = await supabase
+      .from("help_zones")
+      .select("id, zona, insumos_necesarios, estado, created_at")
+      .eq("reportado_por", user.id)
+      .order("created_at", { ascending: false });
+
+    if (zonas) {
+      zonas.forEach((z: any) => {
+        allReports.push({
+          id: z.id,
+          type: "zona",
+          titulo: z.zona,
+          subtitulo: z.insumos_necesarios.slice(0, 2).join(", "),
+          estado: z.estado,
+          created_at: z.created_at,
+          zona: z.zona,
+        });
+      });
+    }
+
+    // Sort all reports by creation date
+    allReports.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    setMyReports(allReports);
 
     // Load my sent requests
     const { data: sent } = await supabase
@@ -221,48 +282,54 @@ export default function PerfilPage() {
               ) : (
                 myReports.map((report) => (
                   <div
-                    key={report.cedula}
+                    key={report.id}
                     className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm"
                   >
-                    <div
-                      className="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => {
-                        setExpandedReports((prev) => {
-                          const newSet = new Set(prev);
-                          if (newSet.has(report.cedula)) {
-                            newSet.delete(report.cedula);
-                          } else {
-                            newSet.add(report.cedula);
-                          }
-                          return newSet;
-                        });
-                      }}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-sm text-gray-600 font-semibold">Cédula</p>
-                          <p className="text-xl font-bold text-gray-900 mb-2">
-                            {report.cedula}
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-xs font-bold px-2 py-1 rounded-full bg-gray-100 text-gray-700">
+                              {report.type === "persona" && "Persona"}
+                              {report.type === "mascota" && "Mascota"}
+                              {report.type === "zona" && "Zona"}
+                            </span>
+                            <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                              report.estado === "desaparecido" ? "bg-red-100 text-red-700" :
+                              report.estado === "encontrado" ? "bg-green-100 text-green-700" :
+                              report.estado === "activa" ? "bg-blue-100 text-blue-700" :
+                              "bg-gray-100 text-gray-700"
+                            }`}>
+                              {report.estado.charAt(0).toUpperCase() + report.estado.slice(1)}
+                            </span>
+                          </div>
+                          <p className="text-xl font-bold text-gray-900">
+                            {report.titulo}
                           </p>
-                          <p className="text-gray-900 font-semibold">
-                            {report.nombre_completo}
-                          </p>
-                          <p className="text-sm text-gray-600 mt-1">
+                          {report.subtitulo && (
+                            <p className="text-sm text-gray-600 mt-1">
+                              {report.subtitulo}
+                            </p>
+                          )}
+                          <p className="text-sm text-gray-500 mt-2">
                             Creado el{" "}
                             {new Date(report.created_at).toLocaleDateString("es-ES")}
                           </p>
                         </div>
                         <a
-                          href={`/desaparecido/${report.cedula}`}
-                          className="text-blue-600 hover:text-blue-700 font-semibold underline"
-                          onClick={(e) => e.stopPropagation()}
+                          href={
+                            report.type === "persona" ? `/desaparecido/${report.cedula}` :
+                            report.type === "mascota" ? `/mascotas` :
+                            `/zonas`
+                          }
+                          className="text-blue-600 hover:text-blue-700 font-semibold underline text-sm"
                         >
-                          Ver Reporte →
+                          Ver →
                         </a>
                       </div>
 
-                      {/* Solicitudes pendientes */}
-                      {(pendingRequests[report.cedula] || []).length > 0 && (
+                      {/* Solicitudes pendientes - solo para personas */}
+                      {report.type === "persona" && report.cedula && (pendingRequests[report.cedula] || []).length > 0 && (
                         <div className="mt-4 pt-4 border-t border-gray-200">
                           <p className="text-sm font-semibold text-orange-700 bg-orange-50 inline-block px-3 py-1 rounded-full">
                             {(pendingRequests[report.cedula] || []).length} solicitud
@@ -278,8 +345,8 @@ export default function PerfilPage() {
                       )}
                     </div>
 
-                    {/* Expanded: Solicitudes pendientes */}
-                    {expandedReports.has(report.cedula) &&
+                    {/* Expanded: Solicitudes pendientes - solo para personas */}
+                    {report.type === "persona" && report.cedula && expandedReports.has(report.cedula) &&
                       (pendingRequests[report.cedula] || []).length > 0 && (
                         <div className="border-t border-gray-200 bg-gray-50 p-6 space-y-4">
                           <h4 className="font-bold text-gray-900 mb-4">
@@ -310,7 +377,7 @@ export default function PerfilPage() {
                                 <div className="flex gap-2">
                                   <Button
                                     onClick={() =>
-                                      handleApprove(report.cedula, request.solicitante_id)
+                                      handleApprove(report.cedula!, request.solicitante_id)
                                     }
                                     disabled={
                                       loadingId ===
@@ -324,7 +391,7 @@ export default function PerfilPage() {
                                   <Button
                                     variant="danger"
                                     onClick={() =>
-                                      handleReject(report.cedula, request.solicitante_id)
+                                      handleReject(report.cedula!, request.solicitante_id)
                                     }
                                     disabled={
                                       loadingId ===

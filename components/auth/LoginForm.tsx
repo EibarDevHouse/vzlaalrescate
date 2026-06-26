@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -15,6 +15,8 @@ export function LoginForm() {
   const [success, setSuccess] = useState(false);
   const [retryAfter, setRetryAfter] = useState<number | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") ?? "/reportar";
   const supabase = createClient();
 
   // Countdown timer for rate limit
@@ -39,7 +41,7 @@ export function LoginForm() {
       const { error: signInError } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+          emailRedirectTo: `${window.location.origin}/auth/confirm?next=${encodeURIComponent(next)}`,
         },
       });
 
