@@ -6,7 +6,9 @@
       "Bash(npm view *)",
       "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=false --import-alias \"@/*\" --no-git)",
       "Bash(ls -la \"c:\\\\Users\\\\ejhea\\\\LaDevHouse\\\\VzlaAlRescate\" | head -20)",
-      "Read(//c/Users/ejhea/LaDevHouse/VzlaAlRescate/**)"
+      "Read(//c/Users/ejhea/LaDevHouse/VzlaAlRescate/**)",
+      "Bash(npm run *)",
+      "Bash(npm install *)"
     ]
   }
 }

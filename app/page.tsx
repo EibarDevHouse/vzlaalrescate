@@ -17,10 +17,10 @@ export default function Home() {
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
               Vzla Al Rescate
             </h1>
-            <p className="text-lg sm:text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-800 font-semibold mb-8 max-w-2xl mx-auto">
               Conectando a familias. Ayudando en la emergencia. Cada búsqueda cuenta.
             </p>
-            <p className="text-base sm:text-lg text-gray-600 mb-10 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-700 mb-10 max-w-2xl mx-auto font-medium">
               Plataforma para reportar y buscar personas desaparecidas tras emergencias
               en Venezuela.
             </p>
@@ -48,22 +48,22 @@ export default function Home() {
             <div className="grid sm:grid-cols-3 gap-8">
               <div className="text-center">
                 <Search className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Busca Libremente</h3>
-                <p className="text-gray-600">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Busca Libremente</h3>
+                <p className="text-gray-800 font-medium">
                   Accede sin registrarte a la base de datos de desaparecidos
                 </p>
               </div>
               <div className="text-center">
                 <Plus className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Reporta Rápido</h3>
-                <p className="text-gray-600">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Reporta Rápido</h3>
+                <p className="text-gray-800 font-medium">
                   Crea un reporte con una foto para conectar con familiares
                 </p>
               </div>
               <div className="text-center">
                 <Heart className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Conexión Humana</h3>
-                <p className="text-gray-600">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Conexión Humana</h3>
+                <p className="text-gray-800 font-medium">
                   Ayudamos a reunir a las personas con sus seres queridos
                 </p>
               </div>

@@ -79,10 +79,11 @@ export async function createMissingPerson(
     return { success: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
+      const firstError = error.issues[0];
       return {
         success: false,
         errorType: "VALIDATION_ERROR",
-        message: error.errors[0]?.message || "Error de validación",
+        message: firstError?.message || "Error de validación",
       };
     }
 

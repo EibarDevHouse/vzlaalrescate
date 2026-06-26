@@ -1,14 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X, Heart } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, Heart, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/Button";
+import { createClient } from "@/lib/supabase/client";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { user, signOut, isLoading } = useAuth();
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      const { data } = await supabase
+        .from("admin_users")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+      setIsAdmin(!!data);
+    };
+
+    checkAdmin();
+  }, [user]);
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
@@ -37,6 +59,21 @@ export function Navbar() {
                 >
                   Reportar
                 </Link>
+                <Link
+                  href="/perfil"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  Mi Perfil
+                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="text-gray-700 hover:text-red-600 transition-colors flex items-center gap-1"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Admin
+                  </Link>
+                )}
                 <Button
                   variant="secondary"
                   size="sm"
@@ -47,15 +84,18 @@ export function Navbar() {
                 </Button>
               </>
             ) : (
-              <Link href="/login">
-                <Button size="sm">Iniciar sesión</Button>
+              <Link
+                href="/login"
+                className="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              >
+                Iniciar sesión
               </Link>
             )}
           </div>
 
           {/* Mobile Menu Toggle */}
           <button
-            className="sm:hidden p-2"
+            className="sm:hidden p-2 text-gray-900"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -73,7 +113,6 @@ export function Navbar() {
             <Link
               href="/buscar"
               className="block text-gray-700 hover:text-blue-600 transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
             >
               Buscar
             </Link>
@@ -82,14 +121,26 @@ export function Navbar() {
                 <Link
                   href="/reportar"
                   className="block text-gray-700 hover:text-blue-600 transition-colors py-2"
-                  onClick={() => setMobileMenuOpen(false)}
                 >
                   Reportar
                 </Link>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-full"
+                <Link
+                  href="/perfil"
+                  className="block text-gray-700 hover:text-blue-600 transition-colors py-2"
+                >
+                  Mi Perfil
+                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="block text-red-600 hover:text-red-700 transition-colors py-2 font-semibold flex items-center gap-2"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Panel de Admin
+                  </Link>
+                )}
+                <button
+                  className="w-full px-4 py-2 text-sm font-semibold rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:bg-gray-100 transition-colors"
                   onClick={() => {
                     signOut();
                     setMobileMenuOpen(false);
@@ -97,13 +148,14 @@ export function Navbar() {
                   disabled={isLoading}
                 >
                   Cerrar sesión
-                </Button>
+                </button>
               </>
             ) : (
-              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button size="sm" className="w-full">
-                  Iniciar sesión
-                </Button>
+              <Link
+                href="/login"
+                className="block w-full px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors text-center"
+              >
+                Iniciar sesión
               </Link>
             )}
           </div>

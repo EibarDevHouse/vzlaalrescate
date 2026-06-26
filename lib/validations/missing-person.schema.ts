@@ -32,13 +32,7 @@ export const missingPersonFormSchema = z.object({
     .string()
     .trim()
     .min(3, "Ingresa la última ubicación conocida"),
-  foto: z
-    .instanceof(File, { message: "La foto es obligatoria" })
-    .refine((f) => f.size <= 5 * 1024 * 1024, "La foto no debe superar 5MB")
-    .refine(
-      (f) => ["image/jpeg", "image/png", "image/webp"].includes(f.type),
-      "Formato de imagen no soportado (JPEG, PNG o WebP)"
-    ),
+  foto: z.any().optional(),
 
   // Optional physical characteristics
   edadAprox: z
@@ -52,7 +46,16 @@ export const missingPersonFormSchema = z.object({
   colorPiel: z.enum(COLOR_PIEL_OPTIONS).optional().nullable(),
   colorCabello: z.enum(COLOR_CABELLO_OPTIONS).optional().nullable(),
   colorOjos: z.enum(COLOR_OJOS_OPTIONS).optional().nullable(),
-  usaLentes: z.boolean().optional().nullable(),
+  usaLentes: z
+    .union([z.boolean(), z.string()])
+    .transform((val) => {
+      if (typeof val === "boolean") return val;
+      if (val === "true") return true;
+      if (val === "false") return false;
+      return null;
+    })
+    .optional()
+    .nullable(),
   estaturaCm: z
     .number()
     .int()

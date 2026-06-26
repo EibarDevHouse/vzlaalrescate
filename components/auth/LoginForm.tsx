@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/Input";
@@ -13,15 +13,29 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [retryAfter, setRetryAfter] = useState<number | null>(null);
   const router = useRouter();
   const supabase = createClient();
+
+  // Countdown timer for rate limit
+  useEffect(() => {
+    if (retryAfter === null || retryAfter === 0) return;
+
+    const timer = setInterval(() => {
+      setRetryAfter((prev) => (prev && prev > 1 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [retryAfter]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setRetryAfter(null); // IMPORTANTE: Limpia el countdown antes de intentar
     setIsLoading(true);
 
     try {
+      console.log("📧 Intentando login con:", email);
       const { error: signInError } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -29,14 +43,32 @@ export function LoginForm() {
         },
       });
 
+      console.log("📡 Respuesta de Supabase:", { error: signInError });
+
       if (signInError) {
+        console.error("❌ Error de Supabase:", signInError.message);
+
+        // Handle rate limiting with user-friendly message
+        if (
+          signInError.message.includes("rate limit") ||
+          signInError.message.includes("too many")
+        ) {
+          console.warn("⏱️ Rate limit detectado - estableciendo countdown");
+          setError(
+            "Has intentado demasiadas veces. Espera 60 segundos antes de intentar de nuevo."
+          );
+          setRetryAfter(60);
+          return;
+        }
         setError(signInError.message);
         return;
       }
 
+      console.log("✅ Email enviado exitosamente");
       setSuccess(true);
       setEmail("");
     } catch (err) {
+      console.error("💥 Error inesperado:", err);
       setError(err instanceof Error ? err.message : "Ocurrió un error");
     } finally {
       setIsLoading(false);
@@ -54,17 +86,39 @@ export function LoginForm() {
     );
   }
 
+  const isRateLimited = !!(retryAfter && retryAfter > 0);
+
+  const handleEmailChange = (newEmail: string) => {
+    setEmail(newEmail);
+    // Reset rate limit when user changes email
+    if (newEmail !== email) {
+      setRetryAfter(null);
+      setError(null);
+    }
+  };
+
   return (
     <form onSubmit={handleSignIn} className="space-y-4">
-      {error && <Alert variant="error">{error}</Alert>}
+      {error && (
+        <Alert variant="error">
+          <div>
+            <p>{error}</p>
+            {isRateLimited && (
+              <p className="text-sm font-medium mt-2">
+                Reintentar en: <span className="font-bold">{retryAfter}s</span>
+              </p>
+            )}
+          </div>
+        </Alert>
+      )}
 
       <Input
         type="email"
         label="Correo Electrónico"
         placeholder="tu@correo.com"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        disabled={isLoading}
+        onChange={(e) => handleEmailChange(e.target.value)}
+        disabled={isLoading || !!isRateLimited}
         required
         icon={<Mail className="w-5 h-5" />}
       />
@@ -73,14 +127,25 @@ export function LoginForm() {
         type="submit"
         className="w-full"
         isLoading={isLoading}
-        disabled={isLoading || !email}
+        disabled={isLoading || !email || !!isRateLimited}
       >
-        Enviar Enlace de Acceso
+        {isRateLimited
+          ? `Espera ${retryAfter}s...`
+          : "Enviar Enlace de Acceso"}
       </Button>
 
-      <p className="text-xs text-gray-500 text-center">
+      <p className="text-xs text-gray-700 text-center font-medium">
         Recibirás un enlace por correo para acceder sin contraseña
       </p>
+
+      {isRateLimited && (
+        <Alert variant="warning">
+          <p className="text-sm">
+            Por seguridad, limitamos la cantidad de intentos. Por favor espera antes
+            de intentar de nuevo.
+          </p>
+        </Alert>
+      )}
     </form>
   );
 }
