@@ -1,31 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 interface ShareButtonsProps {
   name: string;
   cedula: string;
 }
 
 export function ShareButtons({ name, cedula }: ShareButtonsProps) {
-  const [url, setUrl] = useState("");
+  const handleWhatsApp = () => {
+    const url = window.location.href;
+    const text = `Persona desaparecida: ${name} (Cédula: ${cedula})\n\nVer reporte: ${url}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, "_blank");
+  };
 
-  useEffect(() => {
-    setUrl(window.location.href);
-  }, []);
+  const handleTwitter = () => {
+    const url = window.location.href;
+    const text = `Persona desaparecida: ${name}\n${url}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&hashtags=VzlaAlRescate,Desaparecido`;
+    window.open(twitterUrl, "_blank");
+  };
 
-  // Generate share URLs
-  const whatsappUrl = `https://wa.me/?text=Persona%20desaparecida:%20${encodeURIComponent(
-    name
-  )}%20(C%C3%A9dula:%20${encodeURIComponent(cedula)})%0A%0AVer%20reporte:%20${encodeURIComponent(url)}`;
-
-  const twitterUrl = `https://twitter.com/intent/tweet?text=Persona%20desaparecida:%20${encodeURIComponent(
-    name
-  )}%0A${encodeURIComponent(url)}&hashtags=VzlaAlRescate,Desaparecido`;
-
-  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(
-    `Persona desaparecida: ${name}`
-  )}`;
+  const handleFacebook = () => {
+    const url = window.location.href;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    console.log("Facebook URL:", facebookUrl); // Debug
+    window.open(facebookUrl, "_blank");
+  };
 
   return (
     <div className="bg-gray-50 rounded-lg p-6 border border-gray-300">
@@ -35,30 +35,24 @@ export function ShareButtons({ name, cedula }: ShareButtonsProps) {
         de encontrar a esta persona.
       </p>
       <div className="flex flex-wrap gap-2">
-        <a
-          href={whatsappUrl}
-          className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          onClick={handleWhatsApp}
+          className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
         >
           📱 WhatsApp
-        </a>
-        <a
-          href={twitterUrl}
-          className="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-          target="_blank"
-          rel="noopener noreferrer"
+        </button>
+        <button
+          onClick={handleTwitter}
+          className="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
         >
           𝕏 Twitter
-        </a>
-        <a
-          href={facebookUrl}
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-          target="_blank"
-          rel="noopener noreferrer"
+        </button>
+        <button
+          onClick={handleFacebook}
+          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
         >
           f Facebook
-        </a>
+        </button>
       </div>
     </div>
   );
