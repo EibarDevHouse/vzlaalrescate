@@ -79,11 +79,18 @@ export function LoginForm() {
 
   if (success) {
     return (
-      <Alert variant="success" title="Correo enviado">
-        <p>
-          Hemos enviado un enlace de confirmación a <strong>{email}</strong>. Revisa tu
-          correo (incluye spam) y haz clic en el enlace para continuar.
-        </p>
+      <Alert variant="success" title="✅ Correo enviado">
+        <div className="space-y-3">
+          <p className="font-semibold text-green-900">
+            Se envió un enlace de confirmación a:
+          </p>
+          <p className="text-lg font-bold text-green-900 bg-green-100 px-3 py-2 rounded-lg break-all">
+            {email}
+          </p>
+          <p className="text-sm text-green-800">
+            Revisa tu correo (incluyendo la carpeta de spam) y haz clic en el enlace para confirmar tu acceso.
+          </p>
+        </div>
       </Alert>
     );
   }
