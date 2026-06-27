@@ -5,6 +5,7 @@ import { MissingPerson } from "@/types/missing-person";
 import { MapPin, Calendar } from "lucide-react";
 import { Alert } from "@/components/ui/Alert";
 import { DetailPageClient } from "./page-client";
+import { ShareButtons } from "@/components/missing-person/ShareButtons";
 
 export async function generateMetadata({
   params,
@@ -221,49 +222,7 @@ export default async function DesaparecidoDetailPage({
               <DetailPageClient person={mPerson} />
 
               {/* Share Section */}
-              <div className="bg-gray-50 rounded-lg p-6 border border-gray-300">
-                <h3 className="font-bold text-gray-900 mb-3">Compartir</h3>
-                <p className="text-sm text-gray-800 font-medium mb-4">
-                  Comparte este reporte en redes sociales para aumentar las posibilidades
-                  de encontrar a esta persona.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <a
-                    href={`https://wa.me/?text=He%20encontrado%20un%20reporte%20de%20${encodeURIComponent(
-                      mPerson.nombre_completo
-                    )}%20en%20Vzla%20Al%20Rescate:%20${encodeURIComponent(
-                      typeof window !== "undefined" ? window.location.href : ""
-                    )}`}
-                    className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    WhatsApp
-                  </a>
-                  <a
-                    href={`https://twitter.com/intent/tweet?text=Persona%20desaparecida:%20${encodeURIComponent(
-                      mPerson.nombre_completo
-                    )}%20${encodeURIComponent(
-                      typeof window !== "undefined" ? window.location.href : ""
-                    )}`}
-                    className="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Twitter/X
-                  </a>
-                  <a
-                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                      typeof window !== "undefined" ? window.location.href : ""
-                    )}`}
-                    className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Facebook
-                  </a>
-                </div>
-              </div>
+              <ShareButtons name={mPerson.nombre_completo} cedula={mPerson.cedula} />
             </div>
           </div>
         </div>
