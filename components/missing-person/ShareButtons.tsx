@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
+
 interface ShareButtonsProps {
   name: string;
   cedula: string;
 }
 
 export function ShareButtons({ name, cedula }: ShareButtonsProps) {
+  const [copiedMessage, setCopiedMessage] = useState(false);
   const handleWhatsApp = () => {
     const url = window.location.href;
     const text = `Persona desaparecida: ${name} (Cédula: ${cedula})\n\nVer reporte: ${url}`;
@@ -13,18 +16,14 @@ export function ShareButtons({ name, cedula }: ShareButtonsProps) {
     window.open(whatsappUrl, "_blank");
   };
 
-  const handleTwitter = () => {
+  const handleInstagram = () => {
     const url = window.location.href;
-    const text = `Persona desaparecida: ${name}\n${url}`;
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&hashtags=VzlaAlRescate,Desaparecido`;
-    window.open(twitterUrl, "_blank");
-  };
+    const text = `Persona desaparecida: ${name}\n\n${url}`;
 
-  const handleFacebook = () => {
-    const url = window.location.href;
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-    console.log("Facebook URL:", facebookUrl); // Debug
-    window.open(facebookUrl, "_blank");
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedMessage(true);
+      setTimeout(() => setCopiedMessage(false), 3000);
+    });
   };
 
   return (
@@ -42,17 +41,16 @@ export function ShareButtons({ name, cedula }: ShareButtonsProps) {
           📱 WhatsApp
         </button>
         <button
-          onClick={handleTwitter}
-          className="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+          onClick={handleInstagram}
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
         >
-          𝕏 Twitter
+          📸 Instagram
         </button>
-        <button
-          onClick={handleFacebook}
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-        >
-          f Facebook
-        </button>
+        {copiedMessage && (
+          <div className="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-3 rounded-lg font-medium text-sm shadow-lg animate-pulse">
+            ✅ Link copiado. Abre Instagram y comparte en tu historia
+          </div>
+        )}
       </div>
     </div>
   );
