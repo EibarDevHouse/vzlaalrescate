@@ -553,6 +553,59 @@ export default function Home() {
         </section>
 
         {/* ══════════════════════════════════════════
+            PACIENTES EN HOSPITALES
+        ══════════════════════════════════════════ */}
+        <section className="py-20 sm:py-24 px-4 bg-cyan-50">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-gradient-to-br from-cyan-600 to-blue-600 rounded-3xl p-10 sm:p-16 relative overflow-hidden">
+              {/* Background decorative circles */}
+              <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48" />
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full -ml-40 -mb-40" />
+
+              <div className="relative z-10 max-w-3xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-white">
+                    <svg
+                      className="w-7 h-7"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V7a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                  </div>
+                  <p className="text-white/80 text-[13px] font-bold uppercase tracking-widest">
+                    Información de salud
+                  </p>
+                </div>
+
+                <h2 className="text-[32px] sm:text-[44px] font-black text-white leading-tight mb-4">
+                  Consulta pacientes en hospitales
+                </h2>
+
+                <p className="text-white/90 text-[16px] leading-relaxed mb-8 max-w-2xl">
+                  Accede a un listado actualizado de pacientes en distintos centros y
+                  hospitales. Busca por nombre, cédula, ubicación o estado para encontrar
+                  la información que necesitas de forma rápida y confiable.
+                </p>
+
+                <Link
+                  href="/pacientes"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-white text-cyan-600 font-bold rounded-xl hover:bg-blue-50 transition-all text-[16px] shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                >
+                  <span>Ir a pacientes en hospitales</span>
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════
             EMERGENCIAS
         ══════════════════════════════════════════ */}
         <section className="py-20 sm:py-24 px-4 bg-white">
