@@ -18,3 +18,8 @@ export function normalizeCedula(raw: string): string {
 export function isValidCedulaFormat(cedula: string): boolean {
   return /^[VE]-\d{7,8}$/.test(cedula);
 }
+
+export function generateSyntheticCedula(): string {
+  const digits = Array.from({ length: 8 }, () => Math.floor(Math.random() * 10)).join("");
+  return `SC-${digits}`;
+}

@@ -11,6 +11,7 @@ interface SearchResultsProps {
     colorCabello?: string;
     colorOjos?: string;
     usaLentes?: string;
+    tieneCedula?: string;
     edadMin?: string;
     edadMax?: string;
     estaturaMin?: string;
@@ -55,6 +56,11 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
   if (params.usaLentes) {
     const usaLentes = params.usaLentes === "true";
     query_obj = query_obj.eq("usa_lentes", usaLentes);
+  }
+
+  if (params.tieneCedula) {
+    const tieneCedula = params.tieneCedula === "true";
+    query_obj = query_obj.eq("tiene_cedula", tieneCedula);
   }
 
   if (params.edadMin) {

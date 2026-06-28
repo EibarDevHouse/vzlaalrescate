@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
-import { approveAccessRequest, rejectAccessRequest } from "./actions";
+import { approveAccessRequest, rejectAccessRequest, getPendingChildReports, markChildReportReviewed } from "./actions";
 
 interface AccessRequest {
   id: string;
@@ -28,17 +28,29 @@ interface AbuseReport {
   created_at: string;
 }
 
+interface ChildReport {
+  cedula: string;
+  nombre_completo: string;
+  ultima_ubicacion: string;
+  edad_aprox: number | null;
+  created_at: string;
+  reportante_nombre: string;
+  reportante_telefono: string;
+}
+
 export default function AdminPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const supabase = createClient();
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<"solicitudes" | "denuncias">("solicitudes");
+  const [activeTab, setActiveTab] = useState<"solicitudes" | "denuncias" | "sin-cedula">("solicitudes");
   const [solicitudes, setSolicitudes] = useState<AccessRequest[]>([]);
   const [denuncias, setDenuncias] = useState<AbuseReport[]>([]);
+  const [childReports, setChildReports] = useState<ChildReport[]>([]);
   const [loadingSolicitudesId, setLoadingSolicitudesId] = useState<string | null>(null);
   const [loadingDenunciasId, setLoadingDenunciasId] = useState<string | null>(null);
+  const [loadingChildId, setLoadingChildId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -91,6 +103,12 @@ export default function AdminPage() {
 
     if (denunciasData) {
       setDenuncias(denunciasData);
+    }
+
+    // Load child reports pending review
+    const result = await getPendingChildReports();
+    if (result.success && result.data) {
+      setChildReports(result.data);
     }
   };
 
@@ -157,7 +175,7 @@ export default function AdminPage() {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-4 mb-6">
+          <div className="flex gap-4 mb-6 flex-wrap">
             <button
               onClick={() => setActiveTab("solicitudes")}
               className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
@@ -177,6 +195,16 @@ export default function AdminPage() {
               }`}
             >
               Reportes de Abuso ({denuncias.length})
+            </button>
+            <button
+              onClick={() => setActiveTab("sin-cedula")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                activeTab === "sin-cedula"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-900 hover:bg-gray-300"
+              }`}
+            >
+              Sin Cédula por Revisar ({childReports.length})
             </button>
           </div>
 
@@ -292,6 +320,81 @@ export default function AdminPage() {
                     <div className="flex gap-2">
                       <Button variant="secondary">Ver Reporte</Button>
                       <Button variant="danger">Revisar</Button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* Sin Cédula Tab */}
+          {activeTab === "sin-cedula" && (
+            <div className="space-y-4">
+              {childReports.length === 0 ? (
+                <Alert variant="info">No hay reportes sin cédula pendientes de revisar</Alert>
+              ) : (
+                childReports.map((report) => (
+                  <div
+                    key={report.cedula}
+                    className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm border-l-4 border-l-amber-500"
+                  >
+                    <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-sm text-gray-600 font-semibold">Nombre</p>
+                        <p className="text-lg font-bold text-gray-900">
+                          {report.nombre_completo}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 font-semibold">Edad</p>
+                        <p className="text-lg font-bold text-gray-900">
+                          {report.edad_aprox || "No especificada"} años
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 font-semibold">Ubicación</p>
+                        <p className="text-sm text-gray-700">{report.ultima_ubicacion}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 font-semibold">Reportado</p>
+                        <p className="text-sm text-gray-700">
+                          {new Date(report.created_at).toLocaleDateString("es-ES")}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mb-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                      <p className="text-sm text-amber-900 font-semibold mb-1">Reportante</p>
+                      <p className="text-sm text-amber-800">
+                        {report.reportante_nombre} - {report.reportante_telefono}
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="secondary"
+                        onClick={() => router.push(`/desaparecido/${report.cedula}`)}
+                      >
+                        Ver Reporte
+                      </Button>
+                      <Button
+                        onClick={async () => {
+                          setLoadingChildId(report.cedula);
+                          const result = await markChildReportReviewed(report.cedula);
+                          if (result.success) {
+                            setChildReports(
+                              childReports.filter((r) => r.cedula !== report.cedula)
+                            );
+                          } else {
+                            alert("Error: " + result.error);
+                          }
+                          setLoadingChildId(null);
+                        }}
+                        disabled={loadingChildId === report.cedula}
+                        isLoading={loadingChildId === report.cedula}
+                      >
+                        Marcar Revisado
+                      </Button>
                     </div>
                   </div>
                 ))

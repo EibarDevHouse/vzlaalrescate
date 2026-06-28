@@ -109,7 +109,9 @@ export default async function DesaparecidoDetailPage({
                     <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
                       {mPerson.nombre_completo}
                     </h1>
-                    <p className="text-lg font-semibold text-gray-800 mt-1">{mPerson.cedula}</p>
+                    <p className="text-lg font-semibold text-gray-800 mt-1">
+                      {(mPerson as any).tiene_cedula === false ? "Sin cédula de identidad" : mPerson.cedula}
+                    </p>
                   </div>
                   <div
                     className={`px-4 py-2 rounded-lg font-semibold text-sm ${getEstadoColor(

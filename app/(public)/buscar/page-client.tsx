@@ -26,6 +26,7 @@ export function SearchPageClient({ isDesktop = false }: SearchPageClientProps) {
   const [colorCabello, setColorCabello] = useState(params.get("colorCabello") || "");
   const [colorOjos, setColorOjos] = useState(params.get("colorOjos") || "");
   const [usaLentes, setUsaLentes] = useState(params.get("usaLentes") || "");
+  const [tieneCedula, setTieneCedula] = useState(params.get("tieneCedula") || "");
   const [edadMin, setEdadMin] = useState(params.get("edadMin") || "");
   const [edadMax, setEdadMax] = useState(params.get("edadMax") || "");
   const [estaturaMin, setEstaturaMin] = useState(params.get("estaturaMin") || "");
@@ -45,6 +46,8 @@ export function SearchPageClient({ isDesktop = false }: SearchPageClientProps) {
     else newParams.delete("colorOjos");
     if (usaLentes) newParams.set("usaLentes", usaLentes);
     else newParams.delete("usaLentes");
+    if (tieneCedula) newParams.set("tieneCedula", tieneCedula);
+    else newParams.delete("tieneCedula");
     if (edadMin) newParams.set("edadMin", edadMin);
     else newParams.delete("edadMin");
     if (edadMax) newParams.set("edadMax", edadMax);
@@ -66,6 +69,7 @@ export function SearchPageClient({ isDesktop = false }: SearchPageClientProps) {
     "colorCabello",
     "colorOjos",
     "usaLentes",
+    "tieneCedula",
     "edadMin",
     "edadMax",
     "estaturaMin",
@@ -141,6 +145,20 @@ export function SearchPageClient({ isDesktop = false }: SearchPageClientProps) {
           options={[
             { value: "true", label: "Sí" },
             { value: "false", label: "No" },
+          ]}
+        />
+
+        <Select
+          label="Identificación"
+          placeholder="Todos"
+          value={tieneCedula}
+          onChange={(e) => {
+            setTieneCedula(e.target.value);
+            setTimeout(applyFilters, 0);
+          }}
+          options={[
+            { value: "true", label: "Con Cédula" },
+            { value: "false", label: "Sin Identificar" },
           ]}
         />
 

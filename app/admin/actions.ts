@@ -190,3 +190,55 @@ export async function getPendingAccessRequests(cedula: string) {
 
   return { success: true, data };
 }
+
+export async function getPendingChildReports() {
+  const supabase = await createClient();
+  const { data: user } = await supabase.auth.getUser();
+
+  if (!user.user || !(await checkIsAdmin(user.user.id))) {
+    return { error: "No tienes permisos", success: false, data: null };
+  }
+
+  const { data, error } = await supabase
+    .from("missing_persons")
+    .select(
+      `
+      cedula,
+      nombre_completo,
+      ultima_ubicacion,
+      edad_aprox,
+      created_at,
+      reportante_nombre,
+      reportante_telefono
+    `
+    )
+    .eq("requiere_revision", true)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return { error: error.message, success: false, data: null };
+  }
+
+  return { success: true, data };
+}
+
+export async function markChildReportReviewed(cedula: string) {
+  const supabase = await createClient();
+  const { data: user } = await supabase.auth.getUser();
+
+  if (!user.user || !(await checkIsAdmin(user.user.id))) {
+    return { error: "No tienes permisos de admin", success: false };
+  }
+
+  const { error } = await supabase
+    .from("missing_persons")
+    .update({ requiere_revision: false })
+    .eq("cedula", cedula);
+
+  if (error) {
+    return { error: error.message, success: false };
+  }
+
+  revalidatePath("/admin");
+  return { success: true };
+}

@@ -19,6 +19,8 @@ export interface MissingPerson {
   peso_kg: number | null;
   created_at: string;
   updated_at: string;
+  tiene_cedula?: boolean;
+  requiere_revision?: boolean;
 }
 
 export interface FaceMatchResult {

@@ -59,7 +59,9 @@ export function MissingPersonCard({ person }: MissingPersonCardProps) {
           <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
             {person.nombre_completo}
           </h3>
-          <p className="text-sm text-gray-500 mb-3">{person.cedula}</p>
+          <p className="text-sm text-gray-500 mb-3">
+            {(person as any).tiene_cedula === false ? "Sin cédula de identidad" : person.cedula}
+          </p>
 
           {/* Physical characteristics preview */}
           <div className="space-y-2 mb-3">

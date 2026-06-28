@@ -332,50 +332,58 @@ export default function Home() {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {/* Personas */}
-              <Link
-                href="/buscar"
-                className="group bg-white border-2 border-gray-100 hover:border-[#C53030]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-              >
-                <div className="h-1 bg-[#C53030]" />
-                <div className="p-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-14 h-14 bg-red-50 ring-1 ring-red-100 rounded-2xl flex items-center justify-center text-[#C53030]">
-                      <Users className="w-7 h-7" />
+              <div className="space-y-3">
+                <Link
+                  href="/buscar"
+                  className="block group bg-white border-2 border-gray-100 hover:border-[#C53030]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+                >
+                  <div className="h-1 bg-[#C53030]" />
+                  <div className="p-8">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-14 h-14 bg-red-50 ring-1 ring-red-100 rounded-2xl flex items-center justify-center text-[#C53030]">
+                        <Users className="w-7 h-7" />
+                      </div>
+                      <div>
+                        <h3 className="text-[20px] font-black text-gray-900">
+                          Personas
+                        </h3>
+                        <p className="text-[12px] text-gray-400 font-medium">
+                          Adultos · Niños · Adultos mayores
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-[20px] font-black text-gray-900">
-                        Personas
-                      </h3>
-                      <p className="text-[12px] text-gray-400 font-medium">
-                        Adultos · Niños · Adultos mayores
-                      </p>
+                    <p className="text-gray-500 text-[14px] leading-relaxed mb-6">
+                      Registra nombre, cédula, descripción física, fotografía y
+                      los datos de quien puede recibir información. El reporte es
+                      visible de forma inmediata para todo el país.
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-7">
+                      {[
+                        'Nombre y foto',
+                        'Descripción física',
+                        'Cédula',
+                        'Última ubicación conocida',
+                      ].map((t) => (
+                        <span
+                          key={t}
+                          className="px-2.5 py-1 bg-gray-50 text-gray-500 text-[11px] font-semibold rounded-full border border-gray-100"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2 text-[#C53030] font-bold text-[14px] group-hover:gap-3 transition-all">
+                      Reportar persona <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
-                  <p className="text-gray-500 text-[14px] leading-relaxed mb-6">
-                    Registra nombre, cédula, descripción física, fotografía y
-                    los datos de quien puede recibir información. El reporte es
-                    visible de forma inmediata para todo el país.
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-7">
-                    {[
-                      'Nombre y foto',
-                      'Descripción física',
-                      'Cédula',
-                      'Última ubicación conocida',
-                    ].map((t) => (
-                      <span
-                        key={t}
-                        className="px-2.5 py-1 bg-gray-50 text-gray-500 text-[11px] font-semibold rounded-full border border-gray-100"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-2 text-[#C53030] font-bold text-[14px] group-hover:gap-3 transition-all">
-                    Reportar persona <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </Link>
+                </Link>
+                <Link
+                  href="/reportar?sinCedula=true"
+                  className="block text-center px-4 py-2.5 text-sm font-semibold text-[#C53030] bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors"
+                >
+                  ¿Sin cédula? Reportar niño/niña
+                </Link>
+              </div>
 
               {/* Mascotas */}
               <Link

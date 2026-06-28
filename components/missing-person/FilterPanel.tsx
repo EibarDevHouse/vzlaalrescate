@@ -27,6 +27,7 @@ export function FilterPanel({ isOpen, onClose, isDesktop = false }: FilterPanelP
   const [colorCabello, setColorCabello] = useState(searchParams.get("colorCabello") || "");
   const [colorOjos, setColorOjos] = useState(searchParams.get("colorOjos") || "");
   const [usaLentes, setUsaLentes] = useState(searchParams.get("usaLentes") || "");
+  const [tieneCedula, setTieneCedula] = useState(searchParams.get("tieneCedula") || "");
   const [edadMin, setEdadMin] = useState(searchParams.get("edadMin") || "");
   const [edadMax, setEdadMax] = useState(searchParams.get("edadMax") || "");
   const [estaturaMin, setEstaturaMin] = useState(searchParams.get("estaturaMin") || "");
@@ -52,6 +53,9 @@ export function FilterPanel({ isOpen, onClose, isDesktop = false }: FilterPanelP
 
     if (usaLentes) params.set("usaLentes", usaLentes);
     else params.delete("usaLentes");
+
+    if (tieneCedula) params.set("tieneCedula", tieneCedula);
+    else params.delete("tieneCedula");
 
     if (edadMin) params.set("edadMin", edadMin);
     else params.delete("edadMin");
@@ -85,6 +89,7 @@ export function FilterPanel({ isOpen, onClose, isDesktop = false }: FilterPanelP
     setColorCabello("");
     setColorOjos("");
     setUsaLentes("");
+    setTieneCedula("");
     setEdadMin("");
     setEdadMax("");
     setEstaturaMin("");
@@ -98,6 +103,7 @@ export function FilterPanel({ isOpen, onClose, isDesktop = false }: FilterPanelP
     params.delete("colorCabello");
     params.delete("colorOjos");
     params.delete("usaLentes");
+    params.delete("tieneCedula");
     params.delete("edadMin");
     params.delete("edadMax");
     params.delete("estaturaMin");
@@ -117,7 +123,7 @@ export function FilterPanel({ isOpen, onClose, isDesktop = false }: FilterPanelP
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [genero, colorPiel, colorCabello, colorOjos, usaLentes, edadMin, edadMax, estaturaMin, estaturaMax, pesoMin, pesoMax]);
+  }, [genero, colorPiel, colorCabello, colorOjos, usaLentes, tieneCedula, edadMin, edadMax, estaturaMin, estaturaMax, pesoMin, pesoMax]);
 
   return (
     <>
@@ -207,6 +213,18 @@ export function FilterPanel({ isOpen, onClose, isDesktop = false }: FilterPanelP
               options={[
                 { value: "true", label: "Sí" },
                 { value: "false", label: "No" },
+              ]}
+            />
+
+            {/* Tiene Cédula */}
+            <Select
+              label="Identificación"
+              placeholder="Todos"
+              value={tieneCedula}
+              onChange={(e) => setTieneCedula(e.target.value)}
+              options={[
+                { value: "true", label: "Con Cédula" },
+                { value: "false", label: "Sin Identificar" },
               ]}
             />
 
