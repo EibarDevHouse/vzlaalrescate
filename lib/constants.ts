@@ -117,3 +117,9 @@ export const PET_ESTADO_OPTIONS = [
   "desaparecido",
   "encontrado",
 ] as const;
+
+export const HOSPITAL_PATIENT_ESTADO_OPTIONS = [
+  "hospitalizado",
+  "dado_de_alta",
+  "fallecido",
+] as const;

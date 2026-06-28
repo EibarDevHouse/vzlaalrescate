@@ -242,3 +242,73 @@ export async function markChildReportReviewed(cedula: string) {
   revalidatePath("/admin");
   return { success: true };
 }
+
+export async function getHospitalPatients(searchQuery?: string) {
+  const supabase = await createClient();
+  const { data: user } = await supabase.auth.getUser();
+
+  if (!user.user || !(await checkIsAdmin(user.user.id))) {
+    return { error: "No tienes permisos", success: false, data: null };
+  }
+
+  let query_obj = supabase
+    .from("hospital_patients")
+    .select(
+      `
+      id,
+      nombre_completo,
+      edad,
+      cedula,
+      hospital,
+      estado,
+      doctor_a_cargo,
+      sexo,
+      procedencia,
+      created_at
+    `
+    )
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  if (searchQuery && searchQuery.trim()) {
+    query_obj = query_obj.or(
+      `nombre_completo.ilike.%${searchQuery}%,hospital.ilike.%${searchQuery}%,cedula.ilike.%${searchQuery}%`
+    );
+  }
+
+  const { data, error } = await query_obj;
+
+  if (error) {
+    return { error: error.message, success: false, data: null };
+  }
+
+  return { success: true, data };
+}
+
+export async function updateHospitalPatientStatus(
+  id: string,
+  estado: string
+) {
+  const supabase = await createClient();
+  const { data: user } = await supabase.auth.getUser();
+
+  if (!user.user || !(await checkIsAdmin(user.user.id))) {
+    return { error: "No tienes permisos de admin", success: false };
+  }
+
+  if (!["hospitalizado", "dado_de_alta", "fallecido"].includes(estado)) {
+    return { error: "Estado inválido", success: false };
+  }
+
+  const { error } = await supabase
+    .from("hospital_patients")
+    .update({ estado })
+    .eq("id", id);
+
+  if (error) {
+    return { error: error.message, success: false };
+  }
+
+  revalidatePath("/admin");
+  return { success: true };
+}

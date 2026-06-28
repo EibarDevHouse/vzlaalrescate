@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
-import { approveAccessRequest, rejectAccessRequest, getPendingChildReports, markChildReportReviewed } from "./actions";
+import { approveAccessRequest, rejectAccessRequest, getPendingChildReports, markChildReportReviewed, getHospitalPatients, updateHospitalPatientStatus } from "./actions";
 
 interface AccessRequest {
   id: string;
@@ -38,19 +38,35 @@ interface ChildReport {
   reportante_telefono: string;
 }
 
+interface HospitalPatient {
+  id: string;
+  nombre_completo: string;
+  edad: number | null;
+  cedula: string | null;
+  hospital: string;
+  estado: string;
+  doctor_a_cargo: string | null;
+  sexo: string | null;
+  procedencia: string | null;
+  created_at: string;
+}
+
 export default function AdminPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const supabase = createClient();
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<"solicitudes" | "denuncias" | "sin-cedula">("solicitudes");
+  const [activeTab, setActiveTab] = useState<"solicitudes" | "denuncias" | "sin-cedula" | "pacientes">("solicitudes");
   const [solicitudes, setSolicitudes] = useState<AccessRequest[]>([]);
   const [denuncias, setDenuncias] = useState<AbuseReport[]>([]);
   const [childReports, setChildReports] = useState<ChildReport[]>([]);
+  const [hospitalPatients, setHospitalPatients] = useState<HospitalPatient[]>([]);
+  const [patientSearchQuery, setPatientSearchQuery] = useState("");
   const [loadingSolicitudesId, setLoadingSolicitudesId] = useState<string | null>(null);
   const [loadingDenunciasId, setLoadingDenunciasId] = useState<string | null>(null);
   const [loadingChildId, setLoadingChildId] = useState<string | null>(null);
+  const [loadingPatientId, setLoadingPatientId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -109,6 +125,20 @@ export default function AdminPage() {
     const result = await getPendingChildReports();
     if (result.success && result.data) {
       setChildReports(result.data);
+    }
+
+    // Load hospital patients
+    const patientsResult = await getHospitalPatients();
+    if (patientsResult.success && patientsResult.data) {
+      setHospitalPatients(patientsResult.data);
+    }
+  };
+
+  const handlePatientSearch = async (query: string) => {
+    setPatientSearchQuery(query);
+    const result = await getHospitalPatients(query);
+    if (result.success && result.data) {
+      setHospitalPatients(result.data);
     }
   };
 
@@ -205,6 +235,16 @@ export default function AdminPage() {
               }`}
             >
               Sin Cédula por Revisar ({childReports.length})
+            </button>
+            <button
+              onClick={() => setActiveTab("pacientes")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                activeTab === "pacientes"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-900 hover:bg-gray-300"
+              }`}
+            >
+              Pacientes en Hospitales ({hospitalPatients.length})
             </button>
           </div>
 
@@ -398,6 +438,108 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ))
+              )}
+            </div>
+          )}
+
+          {/* Pacientes Tab */}
+          {activeTab === "pacientes" && (
+            <div className="space-y-4">
+              <div className="mb-6">
+                <input
+                  type="text"
+                  placeholder="Busca por nombre, hospital o cédula..."
+                  value={patientSearchQuery}
+                  onChange={(e) => handlePatientSearch(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-600"
+                />
+              </div>
+
+              {hospitalPatients.length === 0 ? (
+                <Alert variant="info">No hay pacientes registrados</Alert>
+              ) : (
+                <div className="space-y-3">
+                  {hospitalPatients.map((patient) => (
+                    <div
+                      key={patient.id}
+                      className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                    >
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+                        <div>
+                          <p className="text-xs text-gray-600 font-semibold">Nombre</p>
+                          <p className="font-bold text-gray-900 text-sm">
+                            {patient.nombre_completo}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-600 font-semibold">Edad / Sexo</p>
+                          <p className="text-gray-900 text-sm">
+                            {patient.edad ? `${patient.edad} años` : "N/A"}
+                            {patient.sexo && ` / ${patient.sexo.charAt(0).toUpperCase() + patient.sexo.slice(1)}`}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-600 font-semibold">Hospital</p>
+                          <p className="text-gray-900 text-sm">{patient.hospital}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-600 font-semibold">Estado</p>
+                          <select
+                            value={patient.estado}
+                            onChange={async (e) => {
+                              setLoadingPatientId(patient.id);
+                              const result = await updateHospitalPatientStatus(
+                                patient.id,
+                                e.target.value
+                              );
+                              if (result.success) {
+                                setHospitalPatients(
+                                  hospitalPatients.map((p) =>
+                                    p.id === patient.id
+                                      ? { ...p, estado: e.target.value }
+                                      : p
+                                  )
+                                );
+                              } else {
+                                alert("Error: " + result.error);
+                              }
+                              setLoadingPatientId(null);
+                            }}
+                            disabled={loadingPatientId === patient.id}
+                            className="px-2 py-1 border border-gray-300 rounded text-xs font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                          >
+                            <option value="hospitalizado">Hospitalizado</option>
+                            <option value="dado_de_alta">Dado de Alta</option>
+                            <option value="fallecido">Fallecido</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3 text-xs">
+                        {patient.doctor_a_cargo && (
+                          <p className="text-gray-700">
+                            <span className="font-semibold">Doctor:</span> {patient.doctor_a_cargo}
+                          </p>
+                        )}
+                        {patient.procedencia && (
+                          <p className="text-gray-700">
+                            <span className="font-semibold">Procedencia:</span> {patient.procedencia}
+                          </p>
+                        )}
+                        {patient.cedula && (
+                          <p className="text-gray-700">
+                            <span className="font-semibold">Cédula:</span> {patient.cedula}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="text-xs text-gray-500">
+                        Registrado:{" "}
+                        {new Date(patient.created_at).toLocaleDateString("es-ES")}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           )}

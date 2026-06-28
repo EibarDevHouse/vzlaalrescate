@@ -138,6 +138,12 @@ export function Navbar() {
               >
                 Zonas
               </Link>
+              <Link
+                href="/pacientes"
+                className="px-4 py-2 text-[14px] font-semibold text-gray-600 hover:text-[#1E3A5F] hover:bg-slate-50 rounded-lg transition-all"
+              >
+                Pacientes
+              </Link>
               {user ? (
                 <>
                   <Link href="/perfil" className="px-4 py-2 text-[14px] font-semibold text-gray-600 hover:text-[#1E3A5F] hover:bg-slate-50 rounded-lg transition-all">
@@ -216,6 +222,16 @@ export function Navbar() {
               >
                 <span>Zonas con ayuda</span>
                 <span className="text-xs px-2 py-0.5 bg-emerald-600 text-white rounded-full font-bold">
+                  Sin registro
+                </span>
+              </Link>
+              <Link
+                href="/pacientes"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-4 py-3.5 text-[15px] font-semibold text-gray-800 hover:bg-slate-50 rounded-xl transition-all group"
+              >
+                <span>Pacientes en hospitales</span>
+                <span className="text-xs px-2 py-0.5 bg-cyan-600 text-white rounded-full font-bold">
                   Sin registro
                 </span>
               </Link>
